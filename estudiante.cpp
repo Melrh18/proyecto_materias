@@ -6,6 +6,9 @@
 #include <cctype>
 using namespace std;
 
+// TODO: Definir string constante con la ruta en donde se escribirá o leera estudiantes.txt
+// para ser usada por toda la clase
+
 // TODO: Un enum limita los valores posibles para x propiedad
 // TODO: En este caso limito a estos 3 únicos valores
 enum class Genero
@@ -107,6 +110,9 @@ public:
     return get<2>(residencia);
   }
 
+  // TODO: Hacer validación de tamaño fijo de 10 caracteres
+  // TODO: Hacer validación de ID único haciendo un for y buscando el ID digitado con los del txt
+  // TODO: Primero, obtener los IDs y convertirlos a un arreglo, luego recorrerlo, luego validarlo y si pasa todo agregarlo
   void set_id(int _id)
   {
     id = _id;
@@ -145,4 +151,22 @@ public:
   {
     get<2>(residencia) = distrito;
   }
+
+  //-------------------------------------------------------------------------------------------
+  // Lógica funcional
+  //-------------------------------------------------------------------------------------------
+  
+  // TODO: Método para crear archivo estudiantes.txt en caso de no existir
+  // void crearArchivo
+
+  // TODO: Método para abrir archivo txt estudiantes.txt
+  // vector<Estudiante> o array, no sé que sea mejor, obtenerEstudiantes
+  // En caso que no exista el archivo lanzar error
+
+  // TODO: Método para guardar estudiante en archivo estudiantes.txt
+  // Si no existe el archivo crearlo con método crearArchivo, no manualmente
+  // Recibir de parámetros un objeto tipo Estudiante
+  // Consumir método obtenerEstudiantes
+  // Validaciones extras
+  // Escribir los datos del estudiante en el txt y separar por ';' o '_' o '|', algún separador visible y poco usado
 };
