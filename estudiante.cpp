@@ -6,8 +6,9 @@ using namespace std;
 
 class Estudiante{
     private: 
-    int id; 
-    string nombre; //Debe llevar los dos apeliidos
+    int id;
+    //Debe llevar los dos apeliidos
+    string nombre; 
     //Debe llevar residencia: Provincia, cantón y distrito
     tuple<string, string, string> residencia;
     int edad; 
@@ -61,8 +62,12 @@ void set_nombre(string _nombre){
     nombre = _nombre; 
 }
 
+// TODO: Hacer validación directamente en el set
+// TODO: Puedes agregar condicional para que sea mayor o igual a YYYY menor o igual a
 void set_edad(int _edad){
+    // TODO: Si no cumple agrega un throw error de tipo out_of_range (Busca como hacerlo)
     edad = _edad; 
+    // TODO: Cuando vayas a solicitar la edad de la persona lo encierras en try-catch para que manejes el posible error
 }
 
 void set_genero(string _genero){
