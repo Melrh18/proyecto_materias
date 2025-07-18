@@ -4,6 +4,8 @@
 #include <tuple>
 #include <stdexcept>
 #include <cctype>
+#include <vector>
+#include <sstream>
 using namespace std;
 
 // TODO: Definir string constante con la ruta en donde se escribirá o leera estudiantes.txt
@@ -47,7 +49,7 @@ private:
   }
 
   // TODO: Conversión de texto (string) a Genero
-  Genero stringToGenero(string _genero) const {
+  Genero stringToGenero(string _genero) const {  //Entero a Genero
     // TODO: Fíjate que aquí hago la validación y el return en la misma línea
     // TODO: esto es posible, no hay problema con ello, es solo para evitar líneas innecesarias
     for (char c: _genero)
@@ -110,24 +112,43 @@ public:
     return get<2>(residencia);
   }
 
-  // TODO: Hacer validación de tamaño fijo de 10 caracteres
+
   // TODO: Hacer validación de ID único haciendo un for y buscando el ID digitado con los del txt
-  // TODO: Primero, obtener los IDs y convertirlos a un arreglo, luego recorrerlo, luego validarlo y si pasa todo agregarlo
-  void set_id(int _id)
-  {
+  void set_id(int _id) {
+    string string_id= to_string(_id);
+    if (string_id.length() != 10){
+        cout <<"La identificación debe contener 10 números" <<endl;
+    }
+    for (char cada_numero : string_id){
+        if (!isdigit(cada_numero)){
+            cout<<"Error: La identificación no debe contener letras" <<endl;
+        }
+    }
     id = _id;
   }
 
   void set_nombre(string _nombre)
   {
+    vector<string> nombre_vector; 
+    stringstream ss(_nombre);
+    string cada_palabra; 
+    while (ss >> cada_palabra){
+        nombre_vector.push_back(cada_palabra);
+    }
+
+    if (nombre_vector.size() != 3){
+        throw invalid_argument("Nombre incorrecto: debe tener un nombre y dos apellidos");
+    }
+
     nombre = _nombre;
   }
 
-  // TODO: Hacer validación directamente en el set
   // TODO: Puedes agregar condicional para que sea mayor o igual a YYYY menor o igual a
   void set_edad(int _edad)
   {
-    // TODO: Si no cumple agrega un throw error de tipo out_of_range (Busca como hacerlo)
+    if(_edad <= 18 || _edad >= 100 ){
+        throw out_of_range("Edad no valida, debe estar entre 18 a 100 ");
+    }
     edad = _edad;
     // TODO: Cuando vayas a solicitar la edad de la persona lo encierras en try-catch para que manejes el posible error
   }
