@@ -1,15 +1,23 @@
-// Crear Clase estudiante
 #include <iostream>
 #include <string>
 #include <tuple>
-#include <stdexcept>
-#include <cctype>
+#include <stdexcept> //manejo de exepciones 
+#include <cctype> //manejo de tipo de carácteres 
 #include <vector>
-#include <sstream>
+#include <sstream> //Para convertir un string en un flujo de datos tipo entrada 
+#include <fstream> //manejo de archivos 
 using namespace std;
 
 // TODO: Definir string constante con la ruta en donde se escribirá o leera estudiantes.txt
 // para ser usada por toda la clase
+
+//----------------------------------------------------------------------------------------------------------------------
+//Creación de archivo
+//-----------------------------------------------------------------------------------------------------------------------
+
+ofstream archivo("estudiante.txt", ios::app);
+
+//-----------------------------------------------------------------------------------------------------------------------
 
 // TODO: Un enum limita los valores posibles para x propiedad
 // TODO: En este caso limito a estos 3 únicos valores
@@ -24,9 +32,7 @@ class Estudiante
 {
 private:
   int id;
-  // Debe llevar los dos apeliidos
-  string nombre;
-  // Debe llevar residencia: Provincia, cantón y distrito
+  string nombre; // Debe llevar los dos apeliidos
   tuple<string, string, string> residencia;
   int edad;
   Genero genero;
@@ -73,20 +79,20 @@ public:
     residencia = make_tuple(provincia, canton, distrito);
   }
 
-  //-------------------------------------------------------------------------------------------
+  //---------------------------------------------------------------------------------------------------------------------------------
   // Getters and Setters
-  //-------------------------------------------------------------------------------------------
-  int get_id()
+  //---------------------------------------------------------------------------------------------------------------------------------
+  int get_id() const 
   {
     return id;
   }
 
-  string get_nombre()
+  string get_nombre() const 
   {
     return nombre;
   }
 
-  int get_edad()
+  int get_edad() const
   {
     return edad;
   }
@@ -173,6 +179,8 @@ public:
     get<2>(residencia) = distrito;
   }
 
+  //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
   //-------------------------------------------------------------------------------------------
   // Lógica funcional
   //-------------------------------------------------------------------------------------------
@@ -191,3 +199,18 @@ public:
   // Validaciones extras
   // Escribir los datos del estudiante en el txt y separar por ';' o '_' o '|', algún separador visible y poco usado
 };
+
+//---------------------------------------------------------------------------------------------------------------------------------
+// Funciones para el manejo de archivo "estudiante.txt"
+//---------------------------------------------------------------------------------------------------------------------------------
+void guardar_estudiante_en_archivo(ofstream& archivo, const Estudiante& estudiante){
+  archivo << estudiante.get_id() <<";";
+  archivo << estudiante.get_nombre() <<";";
+  archivo << estudiante.get_edad() <<";";
+  archivo << estudiante.get_genero() <<";";
+  archivo << estudiante.get_provincia() <<",";
+  archivo << estudiante.get_canton() <<",";
+  archivo << estudiante.get_distrito() <<";" <<endl;                  
+}
+
+
