@@ -2,9 +2,20 @@
 #include <iostream>
 #include <string>
 #include <tuple>
+#include <fstream> //manejo de archivos 
 using namespace std; 
 
-class Notas{
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Creacion de Archivo 
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ofstream archivo("notas.txt", ios::app);
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+class Nota{
     private: 
     int id; 
     string materia;
@@ -12,7 +23,7 @@ class Notas{
     string estado; 
 
     public:
-    Notas(int _id = 0,string _materia = "", int proyecto1 = 0, int proyecto2 = 0, int ensayo = 0, int foro = 0, int defensa = 0, string _estado= 0 ){
+    Nota(int _id = 0,string _materia = "", int proyecto1 = 0, int proyecto2 = 0, int ensayo = 0, int foro = 0, int defensa = 0, string _estado= 0 ){
         id= _id;
         materia = _materia; 
         nota = make_tuple(proyecto1, proyecto2, ensayo, foro, defensa);
@@ -26,5 +37,37 @@ class Notas{
     int get_id() const {
         return id; 
     }
+    
+    string get_materia() const {
+        return materia;
+    }
+
+    int get_proyecto1() const {
+        return get<0>(nota);
+    }
+
+    int get_proyecto2() const {
+        return get<1>(nota);
+    }
+
+    int get_ensayo() const {
+        return get<2>(nota);
+    }
+
+    int get_foro() const{
+        return get<3>(nota);
+    }
+
+    int get_defensa() const {
+        return get<4>(nota);
+    }
+
+    string get_estado() const{
+        return estado;
+    }
 
 };
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Leer archivo estudainte.txt
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

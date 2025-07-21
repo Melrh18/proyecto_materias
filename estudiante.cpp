@@ -8,19 +8,14 @@
 #include <fstream> //manejo de archivos 
 using namespace std;
 
-// TODO: Definir string constante con la ruta en donde se escribirá o leera estudiantes.txt
-// para ser usada por toda la clase
-
 //----------------------------------------------------------------------------------------------------------------------
-//Creación de archivo
+//Creación de Archivo
 //-----------------------------------------------------------------------------------------------------------------------
 
-ofstream archivo("estudiante.txt", ios::app);
+ofstream archivo("estudiantes.txt", ios::app);
 
 //-----------------------------------------------------------------------------------------------------------------------
 
-// TODO: Un enum limita los valores posibles para x propiedad
-// TODO: En este caso limito a estos 3 únicos valores
 enum class Genero
 {
   Femenino,
@@ -37,7 +32,6 @@ private:
   int edad;
   Genero genero;
 
-  // TODO: Conversión de Genero a texto (string)
   string generoToString(Genero _genero) const {
     switch (_genero)
     {
@@ -54,18 +48,10 @@ private:
     }
   }
 
-  // TODO: Conversión de texto (string) a Genero
-  Genero stringToGenero(string _genero) const {  //Entero a Genero
-    // TODO: Fíjate que aquí hago la validación y el return en la misma línea
-    // TODO: esto es posible, no hay problema con ello, es solo para evitar líneas innecesarias
-    for (char c: _genero)
-    {
-      c = toupper(c);
-    }
-    
-    if (_genero == "FEMENINO") return Genero::Femenino;
-    if (_genero == "MASCULINO") return Genero::Masculino;
-    if (_genero == "OTRO") return Genero::Otro;
+  Genero intToGenero(int _genero) const {  //Entero a Genero
+    if (_genero == 1) return Genero::Femenino;
+    if (_genero == 2) return Genero::Masculino;
+    if (_genero == 3) return Genero::Otro;
     throw invalid_argument("Género inválido");
   }
 
@@ -99,7 +85,6 @@ public:
 
   string get_genero() const
   {
-    // TODO: Uso de método privado
     return generoToString(genero);
   }
 
@@ -149,19 +134,17 @@ public:
     nombre = _nombre;
   }
 
-  // TODO: Puedes agregar condicional para que sea mayor o igual a YYYY menor o igual a
   void set_edad(int _edad)
   {
     if(_edad <= 18 || _edad >= 100 ){
         throw out_of_range("Edad no valida, debe estar entre 18 a 100 ");
     }
     edad = _edad;
-    // TODO: Cuando vayas a solicitar la edad de la persona lo encierras en try-catch para que manejes el posible error
   }
 
-  void set_genero(string _genero)
+  void set_genero(int _genero)
   {
-    genero = stringToGenero(_genero);
+    genero = intToGenero(_genero);
   }
 
   void set_provincia(const string &provincia)
@@ -185,9 +168,6 @@ public:
   // Lógica funcional
   //-------------------------------------------------------------------------------------------
   
-  // TODO: Método para crear archivo estudiantes.txt en caso de no existir
-  // void crearArchivo
-
   // TODO: Método para abrir archivo txt estudiantes.txt
   // vector<Estudiante> o array, no sé que sea mejor, obtenerEstudiantes
   // En caso que no exista el archivo lanzar error
@@ -198,9 +178,7 @@ public:
   // Consumir método obtenerEstudiantes
   // Validaciones extras
   // Escribir los datos del estudiante en el txt y separar por ';' o '_' o '|', algún separador visible y poco usado
-};
-
-//---------------------------------------------------------------------------------------------------------------------------------
+  //---------------------------------------------------------------------------------------------------------------------------------
 // Funciones para el manejo de archivo "estudiante.txt"
 //---------------------------------------------------------------------------------------------------------------------------------
 void guardar_estudiante_en_archivo(ofstream& archivo, const Estudiante& estudiante){
@@ -210,7 +188,6 @@ void guardar_estudiante_en_archivo(ofstream& archivo, const Estudiante& estudian
   archivo << estudiante.get_genero() <<";";
   archivo << estudiante.get_provincia() <<",";
   archivo << estudiante.get_canton() <<",";
-  archivo << estudiante.get_distrito() <<";" <<endl;                  
+  archivo << estudiante.get_distrito() <<"/" <<endl;                  
 }
-
-
+};
