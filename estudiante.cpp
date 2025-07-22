@@ -190,4 +190,21 @@ void guardar_estudiante_en_archivo(ofstream& archivo, const Estudiante& estudian
   archivo << estudiante.get_canton() <<",";
   archivo << estudiante.get_distrito() <<"/" <<endl;                  
 }
+
+bool existe_id(const int id, ifstream& archivo){
+
+  string linea;
+    while (getline(archivo, linea)) {
+        stringstream ss(linea);
+        string identificacion;
+        if (getline(ss, identificacion, ';')) {
+          if (id == stoi(identificacion)){
+            return true;
+          }
+        }
+    }
+    archivo.close();
+    return false;
+}
+
 };

@@ -10,6 +10,10 @@ int main(){
         me.guardar_estudiante_en_archivo(archivo, me);
         archivo.close();
     }
-    
+    ifstream estudiantes("estudiantes.txt", ios::app);
+    bool existe= me.existe_id(123589976, estudiantes);
+    cout<<"exist";
+    cout <<existe;
+
     return 0;
 }
