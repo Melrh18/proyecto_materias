@@ -7,3 +7,5 @@
 1234567891;Me R H;21;Femenino;a,b,c/
 1234567891;Me R H;21;Femenino;a,b,c/
 1234567891;Me R H;21;Femenino;a,b,c/
+1234567891;Me R H;21;Femenino;a,b,c/
+1234567891;Me R H;21;Femenino;a,b,c/
