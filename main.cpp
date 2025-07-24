@@ -1,6 +1,9 @@
 #include <iostream>
+#include <stdexcept> //manejo de exepciones1
 #include "estudiante.cpp"
 using namespace std;
+
+Estudiante estudiante;
 
 // Funcion que solo imprime las opciones del menú.
 void imprimir_menu()
@@ -19,53 +22,131 @@ void imprimir_menu()
   cout << "---------------------------------------------------------------------------" << endl;
 }
 
-int main()
+Estudiante registrar_estudiante()
 {
-  int opcion= 0;
-  do{
-    imprimir_menu();
-    cin >> opcion;
-    switch (opcion){
-      case 1:{
-
+  int identidad = 0;
+  string nombre = "";
+  int edad = 0;
+  int genero = 0;
+  string provincia = "";
+  string canton = "";
+  string distrito = "";
+  bool datos_completos = false;
+  while (!datos_completos)
+  {
+    try
+    {
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      if (estudiante.get_id() == 0)
+      {
+        cout << "Escriba la identificación del estudiante" << endl;
+        cin >> identidad;
+        if (estudiante.existe_id(identidad)){
+          throw invalid_argument("La identificación ya existe, debe registar otra");
+        }
+        estudiante.set_id(identidad);
+      }
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      if (estudiante.get_nombre() == "")
+      {
+        cout << "Escriba el nombre del estudiante, debe de llevar nombre y los dos apellidos" << endl;
+        cin.ignore();
+        getline(cin, nombre);
+        estudiante.set_nombre(nombre);
+      }
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      if (estudiante.get_edad() == 0)
+      {
+        cout << "Ingrese la edad " << endl;
+        cout << "El rango debe de ser entre 18-100 años" << endl;
+        cin >> edad;
+        estudiante.set_edad(edad);
+      }
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      if (!estudiante.get_genero_definido())
+      {
+        cout << "Ingrese el género:" << endl;
+        cout << "Digite [0] para femenino" << endl;
+        cout << "Digite [1] para Masculino" << endl;
+        cout << "Digite [2] para Otro" << endl;
+        cin >> genero;
+        estudiante.set_genero(genero);
       }
 
-      case 2:{
-
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      if (estudiante.get_provincia() == "")
+      {
+        cout << "Por último se debe ingresar la residencia" << endl;
+        cout << "Ingrese el nombre de la provincia" << endl;
+        cin.ignore();
+        getline(cin, provincia);
+        estudiante.set_provincia(provincia);
       }
-
-      case 3:{
-        
+      //------------------------------------------------------------------------------------------------------------------------------------------
+      if (estudiante.get_canton() == "")
+      {
+        cout << "Ingrese el nombre del cantón" << endl;
+        getline(cin, canton);
+        estudiante.set_canton(canton);
       }
-
-      case 4:{
-        
+      //-------------------------------------------------------------------------------------------------------------------------------------------------
+      if (estudiante.get_distrito() == "")
+      {
+        cout << "Ingrese el nombre del distrito" << endl;
+        getline(cin, distrito);
+        estudiante.set_distrito(distrito);
       }
-
-      case 5:{
-        
-      }
-
-      case 6:{
-        
-      }
-
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      estudiante.guardar_estudiante_en_archivo(estudiante);
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      datos_completos = true;
+      continue;
+    }
+    catch (const exception &e)
+    {
+      cerr << "Se ha producido un error: " << e.what() << endl;
     }
   }
-  while( opcion != 7);
-  cout<<"Saliendo del programa";
-  Estudiante me(1234567891, "Me R H", 21, Genero::Femenino, "a", "b", "c");
-  cout << "ID: " << me.get_id();
-  ofstream archivo("estudiantes.txt", ios::app);
-  if (archivo.is_open())
+
+  return estudiante;
+}
+
+int main()
+{
+  int opcion = 0;
+  do
   {
-    me.guardar_estudiante_en_archivo(archivo, me);
-    archivo.close();
-  }
-  ifstream estudiantes("estudiantes.txt", ios::app);
-  Estudiante estudiante = estudiante.obtener_estudiante(123567891, estudiantes);
-  cout << "exist";
-  cout << estudiante.get_nombre();
+    imprimir_menu();
+    cin >> opcion;
+    switch (opcion)
+    {
+    case 1:
+    {
+      registrar_estudiante();
+    }
+
+    case 2:
+    {
+    }
+
+    case 3:
+    {
+    }
+
+    case 4:
+    {
+    }
+
+    case 5:
+    {
+    }
+
+    case 6:
+    {
+    }
+    }
+  } while (opcion != 7);
+  cout << "Saliendo del programa";
 
   return 0;
 }

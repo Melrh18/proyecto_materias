@@ -31,6 +31,7 @@ private:
   tuple<string, string, string> residencia;
   int edad;
   Genero genero;
+  bool genero_definido;
 
   string generoToString(Genero _genero) const
   {
@@ -54,11 +55,11 @@ private:
 
   Genero intToGenero(int _genero) const
   { // Entero a Genero
-    if (_genero == 1)
+    if (_genero == 0)
       return Genero::Femenino;
-    if (_genero == 2)
+    if (_genero == 1)
       return Genero::Masculino;
-    if (_genero == 3)
+    if (_genero == 2)
       return Genero::Otro;
     throw invalid_argument("Género inválido");
   }
@@ -71,6 +72,7 @@ public:
     edad = _edad;
     genero = _genero;
     residencia = make_tuple(provincia, canton, distrito);
+    genero_definido= false;
   }
 
   //---------------------------------------------------------------------------------------------------------------------------------
@@ -96,6 +98,10 @@ public:
     return generoToString(genero);
   }
 
+  bool get_genero_definido() const{
+    return genero_definido;
+  }
+
   string get_provincia() const
   {
     return get<0>(residencia);
@@ -117,13 +123,13 @@ public:
     string string_id = to_string(_id);
     if (string_id.length() != 10)
     {
-      cout << "La identificación debe contener 10 números" << endl;
+      throw invalid_argument("La identificación debe contener 10 números"); 
     }
     for (char cada_numero : string_id)
     {
       if (!isdigit(cada_numero))
       {
-        cout << "Error: La identificación no debe contener letras" << endl;
+        throw logic_error("Error: La identificación no debe contener letras");
       }
     }
     id = _id;
@@ -149,7 +155,7 @@ public:
 
   void set_edad(int _edad)
   {
-    if (_edad <= 18 || _edad >= 100)
+    if (_edad < 18 || _edad > 100)
     {
       throw out_of_range("Edad no valida, debe estar entre 18 a 100 ");
     }
@@ -159,20 +165,44 @@ public:
   void set_genero(int _genero)
   {
     genero = intToGenero(_genero);
+    genero_definido = true;
   }
-
   void set_provincia(const string &provincia)
   {
+    if (provincia == "" ){
+      throw invalid_argument("Tienes que agregar el nombre de la provincia, no se permite campos vacíos");
+    }
+    for (char i: provincia){
+      if(isdigit(i)){
+        throw invalid_argument("La provincia no debe contener números");
+      }
+    }
     get<0>(residencia) = provincia;
   }
 
   void set_canton(const string &canton)
   {
+    if (canton == "" ){
+      throw invalid_argument("Tienes que agregar el nombre del cantón, no se permite campos vacíos");
+    }
+    for (char i: canton){
+      if(isdigit(i)){
+        throw invalid_argument("El cantón no debe contener números");
+      }
+    }
     get<1>(residencia) = canton;
   }
 
   void set_distrito(const string &distrito)
   {
+    if (distrito == "" ){
+      throw invalid_argument("Tienes que agregar el nombre del distrito, no se permite campos vacíos");
+    }
+    for (char i: distrito){
+      if(isdigit(i)){
+        throw invalid_argument("El distrito no debe contener números");
+      }
+    }
     get<2>(residencia) = distrito;
   }
 
@@ -195,7 +225,7 @@ public:
   //---------------------------------------------------------------------------------------------------------------------------------
   // Funciones para el manejo de archivo "estudiante.txt"
   //---------------------------------------------------------------------------------------------------------------------------------
-  void guardar_estudiante_en_archivo(ofstream &archivo, const Estudiante &estudiante)
+  void guardar_estudiante_en_archivo(const Estudiante &estudiante)
   {
     archivo << estudiante.get_id() << ";";
     archivo << estudiante.get_nombre() << ";";
@@ -204,6 +234,7 @@ public:
     archivo << estudiante.get_provincia() << ",";
     archivo << estudiante.get_canton() << ",";
     archivo << estudiante.get_distrito() << "/" << endl;
+    cout<< "Estudiante registrado con exito en: 'Estudiante.txt' " <<endl;
   }
 
     Estudiante obtener_estudiante(const int id, ifstream &archivo)
@@ -230,6 +261,22 @@ public:
     }
     archivo.close();
     return Estudiante();
+  }
+  
+  bool existe_id(const int id){
+    ifstream archivo("estudiantes.txt", ios::app);
+    string linea;
+    while (getline(archivo, linea)) {
+        stringstream ss(linea);
+        string identificacion;
+        if (getline(ss, identificacion, ';')) {
+          if (id == stoi(identificacion)){
+            return true;
+          }
+        }
+    }
+    archivo.close();
+    return false;
   }
 
 };
