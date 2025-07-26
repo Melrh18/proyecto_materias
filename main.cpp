@@ -41,7 +41,8 @@ Estudiante registrar_estudiante()
       {
         cout << "Escriba la identificación del estudiante" << endl;
         cin >> identidad;
-        if (estudiante.existe_id(identidad)){
+        if (estudiante.existe_id(identidad))
+        {
           throw invalid_argument("La identificación ya existe, debe registar otra");
         }
         estudiante.set_id(identidad);
@@ -111,6 +112,70 @@ Estudiante registrar_estudiante()
   return estudiante;
 }
 
+void modificar_estudiante()
+{
+  bool datos_completos = false;
+  bool encontro_estudiante = false;
+  int identidad_buscar = 0;
+  int edad = 0;
+  string provincia = "";
+  string canton = "";
+  string distrito = "";
+  while (!datos_completos)
+  {
+    try
+    {
+      if (!encontro_estudiante)
+      {
+        cout << "Ingrese la identificación del estudiante que desea buscar" << endl;
+        cin >> identidad_buscar;
+        if (!estudiante.existe_id(identidad_buscar))
+        {
+          throw invalid_argument("Estudiante no existe");
+        }
+        encontro_estudiante = true;
+      }
+
+      if (estudiante.get_edad() == 0)
+      {
+        cout << "Ingrese la nueva edad del estudiante" << endl;
+        cin >> edad;
+        estudiante.set_edad(edad);
+      }
+
+      if (estudiante.get_provincia() == "")
+      {
+        cout << "Ingrese la nueva provincia" << endl;
+        cin.ignore();
+        getline(cin, provincia);
+        estudiante.set_provincia(provincia);
+      }
+
+      if (estudiante.get_canton() == "")
+      {
+        cout << "Ingrese el nuevo cantón" << endl;
+        getline(cin, canton);
+        estudiante.set_canton(canton);
+      }
+
+      if (estudiante.get_distrito() == "")
+      {
+        cout << "Ingrese el nuevo distrito" << endl;
+        getline(cin, distrito);
+        estudiante.set_distrito(distrito);
+      }
+
+      estudiante.modificar_estudiante(identidad_buscar, edad, provincia, canton, distrito);
+      datos_completos = true;
+      continue;
+    }
+    catch (const exception &e)
+    {
+      cerr << "Se ha producido un error: " << e.what() << endl;
+    }
+  }
+}
+
 int main()
 {
   int opcion = 0;
@@ -131,7 +196,7 @@ int main()
 
     case 3:
     {
-      // TODO: Modificar estudiante
+      modificar_estudiante();
     }
 
     case 4:

@@ -295,7 +295,7 @@ public:
     return false;
   }
 
-  void modificar_estudiante(int id, string nombre, int nueva_edad, string genero, string nueva_provincia, string nuevo_canton, string nuevo_distrito)
+  void modificar_estudiante(int id, int nueva_edad, string nueva_provincia, string nuevo_canton, string nuevo_distrito)
   {
     ifstream archivo_entrada("estudiantes.txt", ios::app);
     vector<string> lineas_actualizadas;
@@ -320,7 +320,7 @@ public:
 
         stringstream nueva_linea;
         // La dirección debe ser separada por comas y no puntos y comas
-        nueva_linea << id_str << ";" << nombre << ";" << nueva_edad << ";" << genero << ";" << nueva_provincia << ";" << nuevo_canton << ";" << nuevo_distrito;
+        nueva_linea << id_str << ";" << nombre << ";" << nueva_edad << ";" << genero << ";" << nueva_provincia << "," << nuevo_canton << "," << nuevo_distrito << "/";
         lineas_actualizadas.push_back(nueva_linea.str());
       }
       else
@@ -334,11 +334,11 @@ public:
 
     // Volver a escribir las lineas en el archivo
     // ios::trunck se usa para sobreescribir
-    ofstream archivo_salida("estudiante.txt", ios::trunc); 
+    ofstream archivo_salida("estudiantes.txt", ios::trunc);
     for (const string &nueva_linea : lineas_actualizadas)
     {
       archivo_salida << nueva_linea << endl;
     }
-    archivo.close();
+    archivo_salida.close();
   }
 };

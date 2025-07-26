@@ -13,4 +13,4 @@
 1234567890;Luis F C;19;Masculino;asd,asd,asd/
 1234567891;Archie Campos M;25;Femenino;San,Jose,Buenos/
 1234567891;Luia F C;18;Masculino;fgh,qwer,awer/
-1234567892;Archie Campos Mendoza;100;Masculino;San Jose ,San Pedro,Buenos aires/
+1234567892;Archie Campos Mendoza;87;Masculino;tree,free,bee/
