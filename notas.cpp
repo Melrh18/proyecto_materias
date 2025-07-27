@@ -5,6 +5,7 @@
 #include <fstream>    //manejo de archivos
 #include <stdexcept>  //manejo de exepciones
 #include <filesystem> //a partir de c++ 17
+#include "estudiante.h"
 using namespace std;
 namespace fs = filesystem;
 
@@ -143,7 +144,7 @@ public:
     return p1 + p2 + cal_ens + cal_fo + def;
   }
 
-  string estado()
+  string obtener_estado()
   {
     float promedio = calcular_promedio();
     if (promedio < 5)
@@ -160,8 +161,8 @@ public:
 
   bool archivo_vacio()
   {
-    ifstream archivo("notas.txt", ios::app);
-    return archivo.peek() == ifstream::traits_type::eof();
+    ifstream an("notas.txt", ios::app);
+    return an.peek() == ifstream::traits_type::eof();
   }
 
   void guardar_nota(int id, string materia, float proyecto1, float proyecto2, float ensayo, float foro, float defensa)
@@ -179,9 +180,9 @@ public:
   int cantidad_maxima(int id)
   {
     int contador = 0;
-    ifstream archivo("notas.txt", ios::app);
+    ifstream arn("notas.txt", ios::app);
     string linea;
-    while (getline(archivo, linea))
+    while (getline(arn, linea))
     {
       stringstream ss(linea);
       string identificacion;
@@ -193,8 +194,75 @@ public:
         }
       }
     }
-    archivo.close();
+    arn.close();
     return 3 - contador;
+  }
+
+  void generar_reporte()
+  {
+    cabecera_reporte();
+    obtener_notas();
+  }
+
+  void cabecera_reporte()
+  {
+    cout << "+" << string(12, '-') << "+" << string(30, '-') << "+" << string(18, '-') << "+" << string(10, '-') << "+" << string(10, '-') << "+" << endl;
+    cout << "|" << left << setw(12) << " ID" << "|" << left << setw(30) << " Nombre" << "|" << left << setw(18) << " Materia" << "|" << left << setw(10) << " Promedio" << "|" << left << setw(10) << " Estado" << "|" << endl;
+    cout << "+" << string(12, '-') << "+" << string(30, '-') << "+" << string(18, '-') << "+" << string(10, '-') << "+" << string(10, '-') << "+" << endl;
+  }
+
+  void obtener_notas()
+  {
+    ifstream archn("notas.txt", ios::app);
+    ifstream arce("estudiantes.txt", ios::app);
+    string linea;
+    Estudiante e;
+    Nota n;
+    int est_id = 0;
+    string est_nombre = "";
+    float promedio = 0;
+    string estado = "";
+    while (getline(archn, linea))
+    {
+      stringstream ss(linea);
+      string identificacion;
+      string materia, p1, p2, ensayo, foro, defensa;
+      if (getline(ss, identificacion, ';'))
+      {
+        e = e.obtener_estudiante(id, arce);
+        est_id = e.get_id();
+        est_nombre = e.get_nombre();
+      }
+      if (getline(ss, materia, ';')){
+        n.set_materia(materia);
+      }
+      if (getline(ss, p1, ';')){
+        n.set_proyecto1(stof(p1));
+      }
+      if (getline(ss, p2, ';')){
+        n.set_proyecto2(stof(p2));
+      }
+      if (getline(ss, ensayo, ';')){
+        n.set_ensayo(stof(ensayo));
+      }
+      if (getline(ss, foro, ';')){
+        n.set_foro(stof(foro));
+      }
+      if (getline(ss, defensa, ';')){
+        n.set_defensa(stof(defensa));
+      }
+
+      promedio = calcular_promedio();
+      estado = obtener_estado();
+
+      cout << "| " << left << setw(12) << e.get_id();
+      cout << "| " << left << setw(30) << e.get_nombre();
+      cout << "| " << left << setw(18) << n.get_materia();
+      cout << "| " << left << setw(10) << promedio;
+      cout << "| " << left << setw(10) << estado;
+      cout << "|";
+    }
+    archn.close();
   }
 };
 

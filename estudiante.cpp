@@ -118,7 +118,6 @@ public:
     return get<2>(residencia);
   }
 
-  // TODO: Hacer validación de ID único haciendo un for y buscando el ID digitado con los del txt
   void set_id(int _id)
   {
     string string_id = to_string(_id);
@@ -168,6 +167,7 @@ public:
     genero = intToGenero(_genero);
     genero_definido = true;
   }
+
   void set_provincia(const string &provincia)
   {
     if (provincia == "")
@@ -218,14 +218,6 @@ public:
 
   //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  //-------------------------------------------------------------------------------------------
-  // Lógica funcional
-  //-------------------------------------------------------------------------------------------
-
-  // TODO: Método para abrir archivo txt estudiantes.txt
-  // vector<Estudiante> o array, no sé que sea mejor, obtenerEstudiantes
-  // En caso que no exista el archivo lanzar error
-
   //---------------------------------------------------------------------------------------------------------------------------------
   // Funciones para el manejo de archivo "estudiante.txt"
   //---------------------------------------------------------------------------------------------------------------------------------
@@ -241,10 +233,10 @@ public:
     cout << "Estudiante registrado con exito en: 'Estudiante.txt' " << endl;
   }
 
-  Estudiante obtener_estudiante(const int id, ifstream &archivo)
+  Estudiante obtener_estudiante(const int id, ifstream &arc)
   {
     string linea;
-    while (getline(archivo, linea))
+    while (getline(arc, linea))
     {
       stringstream ss(linea);
       string identificacion;
@@ -265,15 +257,15 @@ public:
         }
       }
     }
-    archivo.close();
+    arc.close();
     return Estudiante();
   }
 
   bool existe_id(const int id)
   {
-    ifstream archivo("estudiantes.txt", ios::app);
+    ifstream ae("estudiantes.txt", ios::app);
     string linea;
-    while (getline(archivo, linea))
+    while (getline(ae, linea))
     {
       stringstream ss(linea);
       string identificacion;
@@ -285,7 +277,7 @@ public:
         }
       }
     }
-    archivo.close();
+    ae.close();
     return false;
   }
 
@@ -362,4 +354,5 @@ public:
     }
     archivo_salida.close();
   }
+
 };

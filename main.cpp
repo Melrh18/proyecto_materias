@@ -202,17 +202,13 @@ tuple<int, int, bool> cantidad_calificaciones()
   while (!datos_completos)
   {
     //----------------------------------------------------------------------------------------------------------------------------------------
-    if (estudiante.get_id() == 0)
+    cout << "Escriba la identificación del estudiante" << endl;
+    cin >> identidad;
+    if (!estudiante.existe_id(identidad))
     {
-      cout << "Escriba la identificación del estudiante" << endl;
-      cin >> identidad;
-      if (!estudiante.existe_id(identidad))
-      {
-        throw invalid_argument("El estudiante digitado no existe");
-      }
-      estudiante.set_id(identidad);
-      nota.set_id(identidad);
+      throw invalid_argument("El estudiante digitado no existe");
     }
+    nota.set_id(identidad);
     //----------------------------------------------------------------------------------------------------------------------------------------
     // Validación cantidad de notas
     int cantidad_maxima = nota.cantidad_maxima(nota.get_id());
@@ -296,6 +292,7 @@ void registrar_nota(int identidad)
       nota.guardar_nota(identidad, materia, proyecto1, proyecto2, ensayo, foro, defensa);
       //----------------------------------------------------------------------------------------------------------------------------------------
       datos_completos = true;
+      nota = Nota();
       continue;
     }
     catch (const exception &e)
@@ -375,6 +372,8 @@ int main()
 
     case 6:
     {
+      nota.generar_reporte();
+      break;
     }
     }
   } while (opcion != 7);
