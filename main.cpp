@@ -1,9 +1,11 @@
 #include <iostream>
 #include <stdexcept> //manejo de exepciones1
 #include "estudiante.cpp"
+#include "notas.cpp"
 using namespace std;
 
 Estudiante estudiante;
+Nota nota;
 
 // Funcion que solo imprime las opciones del menú.
 void imprimir_menu()
@@ -176,18 +178,163 @@ void modificar_estudiante()
   }
 }
 
-  void eliminar_estudiante(){
-    int id_buscar= 0;
-    cout << "Ingrese la identificación del estudiante que desea eliminar"; 
-    cin>> id_buscar; 
-    estudiante.set_id(id_buscar);
-    if (!estudiante.existe_id(id_buscar))
-        {
-          throw invalid_argument("Estudiante no existe");
-        }else{
-          estudiante.el(id_buscar);
-        }
+void eliminar_estudiante()
+{
+  int id_buscar = 0;
+  cout << "Ingrese la identificación del estudiante que desea eliminar";
+  cin >> id_buscar;
+  estudiante.set_id(id_buscar);
+  if (!estudiante.existe_id(id_buscar))
+  {
+    throw invalid_argument("Estudiante no existe");
   }
+  else
+  {
+    estudiante.eliminar_estudiante(id_buscar);
+  }
+}
+
+tuple<int, int, bool> cantidad_calificaciones()
+{
+  int identidad = 0;
+  int cantidad_a_registrar = 0;
+  bool datos_completos = false;
+  while (!datos_completos)
+  {
+    //----------------------------------------------------------------------------------------------------------------------------------------
+    if (estudiante.get_id() == 0)
+    {
+      cout << "Escriba la identificación del estudiante" << endl;
+      cin >> identidad;
+      if (!estudiante.existe_id(identidad))
+      {
+        throw invalid_argument("El estudiante digitado no existe");
+      }
+      estudiante.set_id(identidad);
+      nota.set_id(identidad);
+    }
+    //----------------------------------------------------------------------------------------------------------------------------------------
+    // Validación cantidad de notas
+    int cantidad_maxima = nota.cantidad_maxima(nota.get_id());
+    if (cantidad_maxima == 0)
+    {
+      cout << "No se pueden registrar más de 3 notas por estudiante";
+      return make_tuple(0, 0, false);
+    }
+    if (cantidad_a_registrar == 0)
+    {
+      cout << "Digite la cantidad de notas que desea ingresar, máximo de notas a registrar para este estudiante es de: " << cantidad_maxima << endl;
+      cin >> cantidad_a_registrar;
+      if (cantidad_a_registrar > cantidad_maxima)
+      {
+        throw invalid_argument("No se pueden registrar más de 3 notas por estudiante");
+      }
+    }
+    datos_completos = true;
+    continue;
+  }
+  return make_tuple(identidad, cantidad_a_registrar, true);
+}
+
+void registrar_nota(int identidad)
+{
+  string materia = "";
+  float proyecto1 = 0;
+  float proyecto2 = 0;
+  float ensayo = 0;
+  float foro = 0;
+  float defensa = 0;
+  bool datos_completos = false;
+  while (!datos_completos)
+  {
+    try
+    {
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      if (nota.get_materia() == "")
+      {
+        cout << "Escriba el nombre de la materia" << endl;
+        cin.ignore();
+        getline(cin, materia);
+        nota.set_materia(materia);
+      }
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      if (nota.get_proyecto1() == 0)
+      {
+        cout << "Ingrese la nota del proyecto 1 en base 10 (0-10)" << endl;
+        cin >> proyecto1;
+        nota.set_proyecto1(proyecto1);
+      }
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      if (nota.get_proyecto2() == 0)
+      {
+        cout << "Ingrese la nota del proyecto 2 en base 10 (0-10)" << endl;
+        cin >> proyecto2;
+        nota.set_proyecto2(proyecto2);
+      }
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      if (nota.get_ensayo() == 0)
+      {
+        cout << "Ingrese la nota del ensayo en base 10 (0-10)" << endl;
+        cin >> ensayo;
+        nota.set_ensayo(ensayo);
+      }
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      if (nota.get_foro() == 0)
+      {
+        cout << "Ingrese la nota del foro en base 10 (0-10)" << endl;
+        cin >> foro;
+        nota.set_foro(foro);
+      }
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      if (nota.get_defensa() == 0)
+      {
+        cout << "Ingrese la nota de la defensa en base 10 (0-10)" << endl;
+        cin >> defensa;
+        nota.set_defensa(defensa);
+      }
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      nota.guardar_nota(identidad, materia, proyecto1, proyecto2, ensayo, foro, defensa);
+      //----------------------------------------------------------------------------------------------------------------------------------------
+      datos_completos = true;
+      continue;
+    }
+    catch (const exception &e)
+    {
+      cerr << "Se ha producido un error: " << e.what() << endl;
+    }
+  }
+}
+
+void ingresar_calificaciones()
+{
+  tuple<int, int, bool> datos;
+  bool datos_iniciales = false;
+  while (!datos_iniciales)
+  {
+    try
+    {
+      datos = cantidad_calificaciones();
+      datos_iniciales = true;
+    }
+    catch (const exception &e)
+    {
+      cerr << "Se ha producido un error: " << e.what() << endl;
+    }
+  }
+
+  int identidad = get<0>(datos);
+  int cantidad = get<1>(datos);
+  bool es_posible_ingresar_mas_datos = get<2>(datos);
+  bool datos_completos = false;
+  if (es_posible_ingresar_mas_datos)
+  {
+    for (int i = 0; i < cantidad; i++)
+    {
+      registrar_nota(identidad);
+    }
+    cout << "Nota registrada con exito en: 'notas.txt' " << endl;
+  }
+}
 
 int main()
 {
@@ -201,15 +348,19 @@ int main()
     case 1:
     {
       registrar_estudiante();
+      break;
     }
 
     case 2:
     {
+      ingresar_calificaciones();
+      break;
     }
 
     case 3:
     {
       modificar_estudiante();
+      break;
     }
 
     case 4:
@@ -219,6 +370,7 @@ int main()
     case 5:
     {
       eliminar_estudiante();
+      break;
     }
 
     case 6:

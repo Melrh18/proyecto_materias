@@ -333,7 +333,7 @@ public:
     archivo_salida.close();
   }
 
-  void el(int id)
+  void eliminar_estudiante(int id)
   {
     ifstream archivo_entrada("estudiantes.txt", ios::app);
     vector<string> lineas_actualizadas;
@@ -360,31 +360,6 @@ public:
     {
       archivo_salida << nueva_linea << endl;
     }
-    archivo_salida.close();
-  }
-
-  void eliminar_estudiante(int id)
-  {
-    ifstream archivo_entrada("estudiantes.txt", ios::app);
-
-    string linea;
-    while (getline(archivo_entrada, linea))
-    {
-      stringstream ss(linea);
-      string id_str;
-      getline(ss, id_str, ';');
-      int id_actual = stoi(id_str);
-
-      if (id_actual != id)
-      {
-        archivo << linea << endl;
-      }
-    }
-    archivo_entrada.close();
-
-    // Volver a escribir las lineas en el archivo
-    // ios::trunck se usa para sobreescribir
-    ofstream archivo_salida("estudiantes.txt", ios::trunc);
     archivo_salida.close();
   }
 };
