@@ -176,6 +176,19 @@ void modificar_estudiante()
   }
 }
 
+  void eliminar_estudiante(){
+    int id_buscar= 0;
+    cout << "Ingrese la identificación del estudiante que desea eliminar"; 
+    cin>> id_buscar; 
+    estudiante.set_id(id_buscar);
+    if (!estudiante.existe_id(id_buscar))
+        {
+          throw invalid_argument("Estudiante no existe");
+        }else{
+          estudiante.el(id_buscar);
+        }
+  }
+
 int main()
 {
   int opcion = 0;
@@ -205,6 +218,7 @@ int main()
 
     case 5:
     {
+      eliminar_estudiante();
     }
 
     case 6:

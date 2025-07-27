@@ -226,12 +226,6 @@ public:
   // vector<Estudiante> o array, no sé que sea mejor, obtenerEstudiantes
   // En caso que no exista el archivo lanzar error
 
-  // TODO: Método para guardar estudiante en archivo estudiantes.txt
-  // Si no existe el archivo crearlo con método crearArchivo, no manualmente
-  // Recibir de parámetros un objeto tipo Estudiante
-  // Consumir método obtenerEstudiantes
-  // Validaciones extras
-  // Escribir los datos del estudiante en el txt y separar por ';' o '_' o '|', algún separador visible y poco usado
   //---------------------------------------------------------------------------------------------------------------------------------
   // Funciones para el manejo de archivo "estudiante.txt"
   //---------------------------------------------------------------------------------------------------------------------------------
@@ -310,8 +304,6 @@ public:
 
       if (id_actual == id)
       {
-        // Ya estos parámetros están definidos a excepción de direccion
-        // Dará error por doble definición
         string nombre, edad, genero, direccion;
         getline(ss, nombre, ';');
         getline(ss, edad, ';');
@@ -319,7 +311,6 @@ public:
         getline(ss, direccion, ';');
 
         stringstream nueva_linea;
-        // La dirección debe ser separada por comas y no puntos y comas
         nueva_linea << id_str << ";" << nombre << ";" << nueva_edad << ";" << genero << ";" << nueva_provincia << "," << nuevo_canton << "," << nuevo_distrito << "/";
         lineas_actualizadas.push_back(nueva_linea.str());
       }
@@ -339,6 +330,61 @@ public:
     {
       archivo_salida << nueva_linea << endl;
     }
+    archivo_salida.close();
+  }
+
+  void el(int id)
+  {
+    ifstream archivo_entrada("estudiantes.txt", ios::app);
+    vector<string> lineas_actualizadas;
+    string linea;
+
+    while (getline(archivo_entrada, linea))
+    {
+      stringstream ss(linea);
+      string id_str;
+      getline(ss, id_str, ';');
+      int id_actual = stoi(id_str);
+
+      if (id_actual != id)
+      {
+        lineas_actualizadas.push_back(linea);
+      }
+    }
+    archivo_entrada.close();
+
+    // Volver a escribir las lineas en el archivo
+    // ios::trunck se usa para sobreescribir
+    ofstream archivo_salida("estudiantes.txt", ios::trunc);
+    for (const string &nueva_linea : lineas_actualizadas)
+    {
+      archivo_salida << nueva_linea << endl;
+    }
+    archivo_salida.close();
+  }
+
+  void eliminar_estudiante(int id)
+  {
+    ifstream archivo_entrada("estudiantes.txt", ios::app);
+
+    string linea;
+    while (getline(archivo_entrada, linea))
+    {
+      stringstream ss(linea);
+      string id_str;
+      getline(ss, id_str, ';');
+      int id_actual = stoi(id_str);
+
+      if (id_actual != id)
+      {
+        archivo << linea << endl;
+      }
+    }
+    archivo_entrada.close();
+
+    // Volver a escribir las lineas en el archivo
+    // ios::trunck se usa para sobreescribir
+    ofstream archivo_salida("estudiantes.txt", ios::trunc);
     archivo_salida.close();
   }
 };
