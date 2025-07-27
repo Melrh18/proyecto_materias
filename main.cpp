@@ -1,8 +1,643 @@
 #include <iostream>
-#include <stdexcept> //manejo de exepciones1
-#include "estudiante.cpp"
-#include "notas.cpp"
+#include <string>
+#include <tuple>
+#include <stdexcept> //manejo de exepciones
+#include <cctype>    //manejo de tipo de carácteres
+#include <vector>
+#include <sstream>   //Para convertir un string en un flujo de datos tipo entrada
+#include <fstream>   //manejo de archivos
+#include <iomanip>   //Se uso en el programa con la función: setw
+#include <cmath> // para round
+
 using namespace std;
+
+ofstream archivo("estudiantes.txt", ios::app);
+ofstream archivo_notas("notas.txt", ios::app);
+
+//-----------------------------------------------------------------------------------------------------------------------
+enum class Genero
+{
+  Femenino,
+  Masculino,
+  Otro
+};
+
+class Estudiante
+{
+private:
+  int id;
+  string nombre; // Debe llevar los dos apeliidos
+  tuple<string, string, string> residencia;
+  int edad;
+  Genero genero;
+  bool genero_definido;
+
+  string generoToString(Genero _genero) const
+  {
+    switch (_genero)
+    {
+    case Genero::Femenino:
+      return "Femenino";
+      break;
+    case Genero::Masculino:
+      return "Masculino";
+      break;
+    case Genero::Otro:
+      return "Otro";
+      break;
+
+    default:
+      throw invalid_argument("Género inválido");
+      break;
+    }
+  }
+
+  Genero intToGenero(int _genero) const
+  { // Entero a Genero
+    if (_genero == 0)
+      return Genero::Femenino;
+    if (_genero == 1)
+      return Genero::Masculino;
+    if (_genero == 2)
+      return Genero::Otro;
+    throw invalid_argument("Género inválido");
+  }
+
+public:
+  Estudiante(int _id = 0, string _nombre = "", int _edad = 0, Genero _genero = Genero::Femenino, string provincia = "", string canton = "", string distrito = "")
+  {
+    id = _id;
+    nombre = _nombre;
+    edad = _edad;
+    genero = _genero;
+    residencia = make_tuple(provincia, canton, distrito);
+    genero_definido = false;
+  }
+
+  //---------------------------------------------------------------------------------------------------------------------------------
+  // Getters and Setters
+  //---------------------------------------------------------------------------------------------------------------------------------
+  int get_id() const
+  {
+    return id;
+  }
+
+  string get_nombre() const
+  {
+    return nombre;
+  }
+
+  int get_edad() const
+  {
+    return edad;
+  }
+
+  string get_genero() const
+  {
+    return generoToString(genero);
+  }
+
+  bool get_genero_definido() const
+  {
+    return genero_definido;
+  }
+
+  string get_provincia() const
+  {
+    return get<0>(residencia);
+  }
+
+  string get_canton() const
+  {
+    return get<1>(residencia);
+  }
+
+  string get_distrito() const
+  {
+    return get<2>(residencia);
+  }
+
+  void set_id(int _id)
+  {
+    string string_id = to_string(_id);
+    if (string_id.length() != 10)
+    {
+      throw invalid_argument("La identificación debe contener 10 números");
+    }
+    for (char cada_numero : string_id)
+    {
+      if (!isdigit(cada_numero))
+      {
+        throw logic_error("Error: La identificación no debe contener letras");
+      }
+    }
+    id = _id;
+  }
+
+  void set_nombre(string _nombre)
+  {
+    vector<string> nombre_vector;
+    stringstream ss(_nombre);
+    string cada_palabra;
+    while (ss >> cada_palabra)
+    {
+      nombre_vector.push_back(cada_palabra);
+    }
+
+    if (nombre_vector.size() != 3)
+    {
+      throw invalid_argument("Nombre incorrecto: debe tener un nombre y dos apellidos");
+    }
+
+    nombre = _nombre;
+  }
+
+  void set_edad(int _edad)
+  {
+    if (_edad < 18 || _edad > 100)
+    {
+      throw out_of_range("Edad no valida, debe estar entre 18 a 100 ");
+    }
+    edad = _edad;
+  }
+
+  void set_genero(int _genero)
+  {
+    genero = intToGenero(_genero);
+    genero_definido = true;
+  }
+
+  void set_provincia(const string &provincia)
+  {
+    if (provincia == "")
+    {
+      throw invalid_argument("Tienes que agregar el nombre de la provincia, no se permite campos vacíos");
+    }
+    for (char i : provincia)
+    {
+      if (isdigit(i))
+      {
+        throw invalid_argument("La provincia no debe contener números");
+      }
+    }
+    get<0>(residencia) = provincia;
+  }
+
+  void set_canton(const string &canton)
+  {
+    if (canton == "")
+    {
+      throw invalid_argument("Tienes que agregar el nombre del cantón, no se permite campos vacíos");
+    }
+    for (char i : canton)
+    {
+      if (isdigit(i))
+      {
+        throw invalid_argument("El cantón no debe contener números");
+      }
+    }
+    get<1>(residencia) = canton;
+  }
+
+  void set_distrito(const string &distrito)
+  {
+    if (distrito == "")
+    {
+      throw invalid_argument("Tienes que agregar el nombre del distrito, no se permite campos vacíos");
+    }
+    for (char i : distrito)
+    {
+      if (isdigit(i))
+      {
+        throw invalid_argument("El distrito no debe contener números");
+      }
+    }
+    get<2>(residencia) = distrito;
+  }
+
+  //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------------------------------------------------------------
+  // Funciones para el manejo de archivo "estudiante.txt"
+  //---------------------------------------------------------------------------------------------------------------------------------
+  void guardar_estudiante_en_archivo(const Estudiante &estudiante)
+  {
+    archivo << estudiante.get_id() << ";";
+    archivo << estudiante.get_nombre() << ";";
+    archivo << estudiante.get_edad() << ";";
+    archivo << estudiante.get_genero() << ";";
+    archivo << estudiante.get_provincia() << ",";
+    archivo << estudiante.get_canton() << ",";
+    archivo << estudiante.get_distrito() << "/" << endl;
+    cout << "Estudiante registrado con exito en: 'Estudiante.txt' " << endl;
+  }
+
+  Estudiante obtener_estudiante(const int id)
+  {
+    ifstream arc("estudiantes.txt", ios::app);
+    string linea;
+    while (getline(arc, linea))
+    {
+      stringstream ss(linea);
+      string identificacion;
+      int contador = 0;
+      string nombre;
+      if (getline(ss, identificacion, ';'))
+      {
+        if (id == stoi(identificacion))
+        {
+          while (getline(ss, nombre, ';'))
+          {
+            contador++;
+            if (contador == 1)
+            {
+              return Estudiante(id, nombre);
+            }
+          }
+        }
+      }
+    }
+    arc.close();
+    return Estudiante();
+  }
+
+  bool existe_id(const int id)
+  {
+    ifstream ae("estudiantes.txt", ios::app);
+    string linea;
+    while (getline(ae, linea))
+    {
+      stringstream ss(linea);
+      string identificacion;
+      if (getline(ss, identificacion, ';'))
+      {
+        if (id == stoi(identificacion))
+        {
+          return true;
+        }
+      }
+    }
+    ae.close();
+    return false;
+  }
+
+  void modificar_estudiante(int id, int nueva_edad, string nueva_provincia, string nuevo_canton, string nuevo_distrito)
+  {
+    ifstream archivo_entrada("estudiantes.txt", ios::app);
+    vector<string> lineas_actualizadas;
+    string linea;
+
+    while (getline(archivo_entrada, linea))
+    {
+      stringstream ss(linea);
+      string id_str;
+      getline(ss, id_str, ';');
+      int id_actual = stoi(id_str);
+
+      if (id_actual == id)
+      {
+        string nombre, edad, genero, direccion;
+        getline(ss, nombre, ';');
+        getline(ss, edad, ';');
+        getline(ss, genero, ';');
+        getline(ss, direccion, ';');
+
+        stringstream nueva_linea;
+        nueva_linea << id_str << ";" << nombre << ";" << nueva_edad << ";" << genero << ";" << nueva_provincia << "," << nuevo_canton << "," << nuevo_distrito << "/";
+        lineas_actualizadas.push_back(nueva_linea.str());
+      }
+      else
+      {
+        // Indicar que el ID ingresado por el usuario no fue encontrado
+        // Se devolvería un throw
+        lineas_actualizadas.push_back(linea);
+      }
+    }
+    archivo_entrada.close();
+
+    // Volver a escribir las lineas en el archivo
+    // ios::trunck se usa para sobreescribir
+    ofstream archivo_salida("estudiantes.txt", ios::trunc);
+    for (const string &nueva_linea : lineas_actualizadas)
+    {
+      archivo_salida << nueva_linea << endl;
+    }
+    archivo_salida.close();
+  }
+
+  void eliminar_estudiante(int id)
+  {
+    ifstream archivo_entrada("estudiantes.txt", ios::app);
+    vector<string> lineas_actualizadas;
+    string linea;
+
+    while (getline(archivo_entrada, linea))
+    {
+      stringstream ss(linea);
+      string id_str;
+      getline(ss, id_str, ';');
+      int id_actual = stoi(id_str);
+
+      if (id_actual != id)
+      {
+        lineas_actualizadas.push_back(linea);
+      }
+    }
+    archivo_entrada.close();
+
+    // Volver a escribir las lineas en el archivo
+    // ios::trunck se usa para sobreescribir
+    ofstream archivo_salida("estudiantes.txt", ios::trunc);
+    for (const string &nueva_linea : lineas_actualizadas)
+    {
+      archivo_salida << nueva_linea << endl;
+    }
+    archivo_salida.close();
+  }
+};
+
+class Nota
+{
+private:
+  int id;
+  string materia;
+  float proyecto1;
+  float proyecto2;
+  float ensayo;
+  float foro;
+  float defensa;
+
+public:
+  Nota(int _id = 0, string _materia = "", float _proyecto1 = 0, float _proyecto2 = 0, float _ensayo = 0, float _foro = 0, float _defensa = 0)
+  {
+    id = _id;
+    materia = _materia;
+    proyecto1 = _proyecto1;
+    proyecto2 = _proyecto2;
+    ensayo = _ensayo;
+    foro = _foro;
+    defensa = _defensa;
+  }
+
+  //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  // Getters and Setters
+  //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+  int get_id() const
+  {
+    return id;
+  }
+
+  string get_materia() const
+  {
+    return materia;
+  }
+
+  float get_proyecto1() const
+  {
+    return proyecto1;
+  }
+
+  float get_proyecto2() const
+  {
+    return proyecto2;
+  }
+
+  float get_ensayo() const
+  {
+    return ensayo;
+  }
+
+  float get_foro() const
+  {
+    return foro;
+  }
+
+  float get_defensa() const
+  {
+    return defensa;
+  }
+
+  void set_id(int _id)
+  {
+    id = _id;
+  }
+
+  void set_materia(string _materia)
+  {
+    materia = _materia;
+  }
+
+  void set_proyecto1(float _proyecto1)
+  {
+    if (proyecto1 < 0 || proyecto1 > 10)
+    {
+      throw invalid_argument("La nota debe estar en base 10");
+    }
+
+    float redondeado= round(_proyecto1 *100.0f)/100.0f;
+    if (fabs(_proyecto1 - redondeado)> 0.00001f){
+      throw invalid_argument("No pueden haber más de dos decimales"); 
+    }
+    proyecto1 = _proyecto1;
+  }
+
+  void set_proyecto2(float _proyecto2)
+  {
+    if (proyecto2 < 0 || proyecto2 > 10)
+    {
+      throw invalid_argument("La nota debe estar en base 10");
+    }
+
+    float redondeado= round(_proyecto2 *100.0f)/100.0f;
+    if (fabs(_proyecto2 - redondeado)> 0.00001f){
+      throw invalid_argument("No pueden haber más de dos decimales"); 
+    }
+    proyecto2 = _proyecto2;
+  }
+
+  void set_ensayo(float _ensayo)
+  {
+    if (proyecto1 < 0 || proyecto2 > 10)
+    {
+      throw invalid_argument("La nota debe estar en base 10");
+    }
+    float redondeado= round(_ensayo *100.0f)/100.0f;
+    if (fabs(_ensayo - redondeado)> 0.00001f){
+      throw invalid_argument("No pueden haber más de dos decimales"); 
+    }
+    ensayo = _ensayo;
+  }
+
+  void set_foro(float _foro)
+  {
+    if (proyecto1 < 0 || proyecto2 > 10)
+    {
+      throw invalid_argument("La nota debe estar en base 10");
+    }
+    float redondeado= round(_foro *100.0f)/100.0f;
+    if (fabs(_foro - redondeado)> 0.00001f){
+      throw invalid_argument("No pueden haber más de dos decimales"); 
+    }
+    foro = _foro;
+  }
+
+  void set_defensa(float _defensa)
+  {
+    if (proyecto1 < 0 || proyecto2 > 10)
+    {
+      throw invalid_argument("La nota debe estar en base 10");
+    }
+    float redondeado= round(_defensa *100.0f)/100.0f;
+    if (fabs(_defensa - redondeado)> 0.00001f){
+      throw invalid_argument("No pueden haber más de dos decimales"); 
+    }
+    defensa = _defensa;
+  }
+
+  float calcular_promedio(Nota nota)
+  {
+    float p1 = 0.1 * nota.get_proyecto1();
+    float p2 = 0.2 * nota.get_proyecto2();
+    float cal_ens = 0.3 * nota.get_ensayo();
+    float cal_fo = 0.1 * nota.get_foro();
+    float def = 0.3 * nota.get_defensa();
+    return p1 + p2 + cal_ens + cal_fo + def;
+  }
+
+  string obtener_estado(Nota nota)
+  {
+    float promedio = calcular_promedio(nota);
+    if (promedio < 5)
+    {
+      return "Reprobo";
+    }
+
+    if (promedio >= 5 && promedio < 7)
+    {
+      return "Reposición";
+    }
+    return "Aprobo";
+  }
+
+  bool archivo_vacio()
+  {
+    ifstream an("notas.txt", ios::app);
+    return an.peek() == ifstream::traits_type::eof();
+  }
+
+  void guardar_nota(int id, Nota nueva_nota)
+  {
+    nueva_nota.set_id(id);
+    archivo_notas << "[";
+    archivo_notas << id << ";";
+    archivo_notas << nueva_nota.get_materia() << ";";
+    archivo_notas << nueva_nota.get_proyecto1() << ";";
+    archivo_notas << nueva_nota.get_proyecto2() << ";";
+    archivo_notas << nueva_nota.get_ensayo() << ";";
+    archivo_notas << nueva_nota.get_foro() << ";";
+    archivo_notas << nueva_nota.get_defensa() << ";";
+    float promedio = calcular_promedio(nueva_nota);
+    string estado = obtener_estado(nueva_nota);
+    archivo_notas << promedio << ";";
+    archivo_notas << estado << "]" << endl;
+  }
+
+  int cantidad_maxima(int id)
+  {
+    int contador = 0;
+    ifstream arn("notas.txt", ios::app);
+    string linea;
+    while (getline(arn, linea))
+    {
+      stringstream ss(linea);
+      string identificacion;
+      if (getline(ss, identificacion, ';'))
+      {
+        if (id == stoi(identificacion.substr(1)))
+        {
+          contador++;
+        }
+      }
+    }
+    arn.close();
+    return 3 - contador;
+  }
+
+  void generar_reporte()
+  {
+    cabecera_reporte();
+    obtener_notas();
+  }
+
+  void cabecera_reporte()
+  {
+    cout << "+" << string(12, '-') << "+" << string(30, '-') << "+" << string(20, '-') << "+" << string(12, '-') << "+" << string(16, '-') << "+" << endl;
+    cout << "|" << left << setw(12) << " ID" << "|" << left << setw(30) << " Nombre" << "|" << left << setw(20) << " Materia" << "|" << left << setw(12) << " Promedio" << "|" << left << setw(16) << " Estado" << "|" << endl;
+    cout << "+" << string(12, '-') << "+" << string(30, '-') << "+" << string(20, '-') << "+" << string(12, '-') << "+" << string(16, '-') << "+" << endl;
+  }
+
+  void obtener_notas()
+  {
+    ifstream archn("notas.txt", ios::app);
+    string linea;
+    Estudiante e;
+    Nota n;
+    int est_id = 0;
+    string est_nombre = "";
+    float promedio = 0;
+    string estado = "";
+    while (getline(archn, linea))
+    {
+      stringstream ss(linea);
+      string identificacion;
+      string materia, p1, p2, ensayo, foro, defensa;
+      if (getline(ss, identificacion, ';'))
+      {
+        est_id = stoi(identificacion.substr(1));
+        e = e.obtener_estudiante(est_id);
+        est_id = e.get_id();
+        est_nombre = e.get_nombre();
+      }
+      if (getline(ss, materia, ';'))
+      {
+        n.set_materia(materia);
+      }
+      if (getline(ss, p1, ';'))
+      {
+        n.set_proyecto1(stof(p1));
+      }
+      if (getline(ss, p2, ';'))
+      {
+        n.set_proyecto2(stof(p2));
+      }
+      if (getline(ss, ensayo, ';'))
+      {
+        n.set_ensayo(stof(ensayo));
+      }
+      if (getline(ss, foro, ';'))
+      {
+        n.set_foro(stof(foro));
+      }
+      if (getline(ss, defensa, ';'))
+      {
+        n.set_defensa(stof(defensa));
+      }
+
+      promedio = calcular_promedio(n);
+      estado = obtener_estado(n);
+
+      cout << "| " << left << setw(11) << e.get_id();
+      cout << "| " << left << setw(29) << e.get_nombre();
+      cout << "| " << left << setw(20) << n.get_materia();
+      cout << "| " << left << setw(11) << promedio;
+      cout << "| " << left << setw(15) << estado;
+      cout << "|" << endl;
+      e = Estudiante();
+    }
+    archn.close();
+  }
+};
 
 Estudiante estudiante;
 Nota nota;
@@ -289,7 +924,7 @@ void registrar_nota(int identidad)
         nota.set_defensa(defensa);
       }
       //----------------------------------------------------------------------------------------------------------------------------------------
-      nota.guardar_nota(identidad, materia, proyecto1, proyecto2, ensayo, foro, defensa);
+      nota.guardar_nota(identidad, nota);
       //----------------------------------------------------------------------------------------------------------------------------------------
       datos_completos = true;
       nota = Nota();
