@@ -4,10 +4,10 @@
 #include <stdexcept> //manejo de exepciones
 #include <cctype>    //manejo de tipo de carácteres
 #include <vector>
-#include <sstream>   //Para convertir un string en un flujo de datos tipo entrada
-#include <fstream>   //manejo de archivos
-#include <iomanip>   //Se uso en el programa con la función: setw
-#include <cmath> // para round
+#include <sstream> //Para convertir un string en un flujo de datos tipo entrada
+#include <fstream> //manejo de archivos
+#include <iomanip> //Se uso en el programa con la función: setw
+#include <cmath>   // para round
 
 using namespace std;
 
@@ -281,6 +281,10 @@ public:
     return false;
   }
 
+  void seleccionar_materias(int id)
+  {
+  }
+
   void modificar_estudiante(int id, int nueva_edad, string nueva_provincia, string nuevo_canton, string nuevo_distrito)
   {
     ifstream archivo_entrada("estudiantes.txt", ios::app);
@@ -366,9 +370,11 @@ private:
   float ensayo;
   float foro;
   float defensa;
+  float promedio;
+  string estado;
 
 public:
-  Nota(int _id = 0, string _materia = "", float _proyecto1 = 0, float _proyecto2 = 0, float _ensayo = 0, float _foro = 0, float _defensa = 0)
+  Nota(int _id = 0, string _materia = "", float _proyecto1 = 0, float _proyecto2 = 0, float _ensayo = 0, float _foro = 0, float _defensa = 0, float _promedio = 0, string _estado = "")
   {
     id = _id;
     materia = _materia;
@@ -377,6 +383,8 @@ public:
     ensayo = _ensayo;
     foro = _foro;
     defensa = _defensa;
+    promedio = _promedio;
+    estado = _estado;
   }
 
   //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -418,6 +426,16 @@ public:
     return defensa;
   }
 
+  float get_promedio() const
+  {
+    return promedio;
+  }
+
+  float get_estado() const
+  {
+    return defensa;
+  }
+
   void set_id(int _id)
   {
     id = _id;
@@ -435,9 +453,10 @@ public:
       throw invalid_argument("La nota debe estar en base 10");
     }
 
-    float redondeado= round(_proyecto1 *100.0f)/100.0f;
-    if (fabs(_proyecto1 - redondeado)> 0.00001f){
-      throw invalid_argument("No pueden haber más de dos decimales"); 
+    float redondeado = round(_proyecto1 * 100.0f) / 100.0f;
+    if (fabs(_proyecto1 - redondeado) > 0.00001f)
+    {
+      throw invalid_argument("No pueden haber más de dos decimales");
     }
     proyecto1 = _proyecto1;
   }
@@ -449,9 +468,10 @@ public:
       throw invalid_argument("La nota debe estar en base 10");
     }
 
-    float redondeado= round(_proyecto2 *100.0f)/100.0f;
-    if (fabs(_proyecto2 - redondeado)> 0.00001f){
-      throw invalid_argument("No pueden haber más de dos decimales"); 
+    float redondeado = round(_proyecto2 * 100.0f) / 100.0f;
+    if (fabs(_proyecto2 - redondeado) > 0.00001f)
+    {
+      throw invalid_argument("No pueden haber más de dos decimales");
     }
     proyecto2 = _proyecto2;
   }
@@ -462,9 +482,10 @@ public:
     {
       throw invalid_argument("La nota debe estar en base 10");
     }
-    float redondeado= round(_ensayo *100.0f)/100.0f;
-    if (fabs(_ensayo - redondeado)> 0.00001f){
-      throw invalid_argument("No pueden haber más de dos decimales"); 
+    float redondeado = round(_ensayo * 100.0f) / 100.0f;
+    if (fabs(_ensayo - redondeado) > 0.00001f)
+    {
+      throw invalid_argument("No pueden haber más de dos decimales");
     }
     ensayo = _ensayo;
   }
@@ -475,9 +496,10 @@ public:
     {
       throw invalid_argument("La nota debe estar en base 10");
     }
-    float redondeado= round(_foro *100.0f)/100.0f;
-    if (fabs(_foro - redondeado)> 0.00001f){
-      throw invalid_argument("No pueden haber más de dos decimales"); 
+    float redondeado = round(_foro * 100.0f) / 100.0f;
+    if (fabs(_foro - redondeado) > 0.00001f)
+    {
+      throw invalid_argument("No pueden haber más de dos decimales");
     }
     foro = _foro;
   }
@@ -488,11 +510,31 @@ public:
     {
       throw invalid_argument("La nota debe estar en base 10");
     }
-    float redondeado= round(_defensa *100.0f)/100.0f;
-    if (fabs(_defensa - redondeado)> 0.00001f){
-      throw invalid_argument("No pueden haber más de dos decimales"); 
+    float redondeado = round(_defensa * 100.0f) / 100.0f;
+    if (fabs(_defensa - redondeado) > 0.00001f)
+    {
+      throw invalid_argument("No pueden haber más de dos decimales");
     }
     defensa = _defensa;
+  }
+
+  void set_promedio(float _promedio)
+  {
+    if (_promedio < 0 || _promedio > 10)
+    {
+      throw invalid_argument("El promedio debe estar en base 10");
+    }
+    float redondeado = round(_promedio * 100.0f) / 100.0f;
+    if (fabs(_promedio - redondeado) > 0.00001f)
+    {
+      throw invalid_argument("No pueden haber más de dos decimales");
+    }
+    promedio = _promedio;
+  }
+
+  void set_estado(string _estado)
+  {
+    estado = _estado;
   }
 
   float calcular_promedio(Nota nota)
@@ -502,7 +544,8 @@ public:
     float cal_ens = 0.3 * nota.get_ensayo();
     float cal_fo = 0.1 * nota.get_foro();
     float def = 0.3 * nota.get_defensa();
-    return p1 + p2 + cal_ens + cal_fo + def;
+    float resultado = p1 + p2 + cal_ens + cal_fo + def;
+    return round(resultado * 100) / 100.0f;
   }
 
   string obtener_estado(Nota nota)
@@ -541,6 +584,56 @@ public:
     string estado = obtener_estado(nueva_nota);
     archivo_notas << promedio << ";";
     archivo_notas << estado << "]" << endl;
+  }
+
+  void editar_nota(int id, Nota nueva_nota)
+  {
+    ifstream archivo_entrada("notas.txt", ios::app);
+    vector<string> lineas_actualizadas;
+    string linea;
+
+    while (getline(archivo_entrada, linea))
+    {
+      stringstream ss(linea);
+      string id_str;
+      string mat;
+      getline(ss, id_str, ';');
+      getline(ss, mat, ';');
+      int id_actual = stoi(id_str.substr(1));
+
+      if (id_actual == id && mat == nueva_nota.get_materia())
+      {
+        string materia, proyecto1, proyecto2, ensayo, foro, defensa, promedio, estado;
+        getline(ss, proyecto1, ';');
+        getline(ss, proyecto2, ';');
+        getline(ss, ensayo, ';');
+        getline(ss, foro, ';');
+        getline(ss, defensa, ';');
+        getline(ss, estado, ']');
+
+        stringstream nueva_linea;
+        float nuevo_promedio = calcular_promedio(nueva_nota);
+        string nuevo_estado = obtener_estado(nueva_nota);
+        nueva_linea << "[" << id_actual << ";" << mat << ";" << nueva_nota.get_proyecto1() << ";" << nueva_nota.get_proyecto2() << ";" << nueva_nota.get_ensayo() << ";" << nueva_nota.get_foro() << ";" << nueva_nota.get_defensa() << ";" << nuevo_promedio << ";" << nuevo_estado << "]";
+        lineas_actualizadas.push_back(nueva_linea.str());
+      }
+      else
+      {
+        // Indicar que el ID ingresado por el usuario no fue encontrado
+        // Se devolvería un throw
+        lineas_actualizadas.push_back(linea);
+      }
+    }
+    archivo_entrada.close();
+
+    // Volver a escribir las lineas en el archivo
+    // ios::trunck se usa para sobreescribir
+    ofstream archivo_salida("notas.txt", ios::trunc);
+    for (const string &nueva_linea : lineas_actualizadas)
+    {
+      archivo_salida << nueva_linea << endl;
+    }
+    archivo_salida.close();
   }
 
   int cantidad_maxima(int id)
@@ -636,6 +729,50 @@ public:
       e = Estudiante();
     }
     archn.close();
+  }
+
+  vector<Nota> notas_por_estudiante(int id)
+  {
+    ifstream archivo_entrada("notas.txt", ios::app);
+    Nota nota_estudiante;
+    vector<Nota> notas_a_devolver;
+    string linea;
+
+    while (getline(archivo_entrada, linea))
+    {
+      stringstream ss(linea);
+      string id_str;
+      getline(ss, id_str, ';');
+      int id_actual = stoi(id_str.substr(1));
+
+      if (id_actual == id)
+      {
+        nota_estudiante.set_id(id);
+        string materia, proyecto1, proyecto2, ensayo, foro, defensa, promedio, estado;
+        getline(ss, materia, ';');
+        nota_estudiante.set_materia(materia);
+        getline(ss, proyecto1, ';');
+        nota_estudiante.set_proyecto1(stof(proyecto1));
+        getline(ss, proyecto2, ';');
+        nota_estudiante.set_proyecto2(stof(proyecto2));
+        getline(ss, ensayo, ';');
+        nota_estudiante.set_ensayo(stof(ensayo));
+        getline(ss, foro, ';');
+        nota_estudiante.set_foro(stof(foro));
+        getline(ss, defensa, ';');
+        nota_estudiante.set_defensa(stof(defensa));
+        getline(ss, promedio, ';');
+        nota_estudiante.set_promedio(stof(promedio));
+        getline(ss, estado, ']');
+        nota_estudiante.set_estado(estado);
+
+        notas_a_devolver.push_back(nota_estudiante);
+        nota_estudiante = Nota();
+      }
+    }
+    archivo_entrada.close();
+
+    return notas_a_devolver;
   }
 };
 
@@ -738,6 +875,7 @@ Estudiante registrar_estudiante()
       estudiante.guardar_estudiante_en_archivo(estudiante);
       //----------------------------------------------------------------------------------------------------------------------------------------
       datos_completos = true;
+      estudiante = Estudiante();
       continue;
     }
     catch (const exception &e)
@@ -769,6 +907,7 @@ void modificar_estudiante()
         if (!estudiante.existe_id(identidad_buscar))
         {
           throw invalid_argument("Estudiante no existe");
+          datos_completos = true;
         }
         encontro_estudiante = true;
       }
@@ -968,6 +1107,126 @@ void ingresar_calificaciones()
   }
 }
 
+void modificar_calificaciones()
+{
+  bool datos_completos = false;
+  bool encontro_estudiante = false;
+  int identidad_buscar = 0;
+  float proyecto1 = 0;
+  float proyecto2 = 0;
+  float ensayo = 0;
+  float foro = 0;
+  float defensa = 0;
+  while (!datos_completos)
+  {
+    try
+    {
+      if (!encontro_estudiante)
+      {
+        cout << "Ingrese la identificación del estudiante que desea modificar notas" << endl;
+        cin >> identidad_buscar;
+        if (!estudiante.existe_id(identidad_buscar))
+        {
+          throw invalid_argument("Estudiante no existe");
+        }
+        encontro_estudiante = true;
+      }
+
+      vector<Nota> notas_del_estudiante = nota.notas_por_estudiante(identidad_buscar);
+
+      if (notas_del_estudiante.empty())
+      {
+        cout << "Este estudiante no tiene notas registradas" << endl;
+        continue;
+      }
+
+      // Validar cual nota modificar
+      cout << "Cuál de las siguientes notas desea modificar: " << endl;
+      for (size_t i = 0; i < notas_del_estudiante.size(); i++)
+      {
+        cout << i << " - " << notas_del_estudiante[i].get_materia() << endl;
+      }
+
+      string val = "";
+      int op = 0;
+      bool seleccion_hecha = false;
+      int valor_maximo = notas_del_estudiante.size() - 1;
+      while (!seleccion_hecha)
+      {
+        getline(cin, val);
+
+        try
+        {
+          op = stoi(val);
+          if (op < 0 || op > valor_maximo)
+          {
+            throw out_of_range("Valor fuera de rango");
+          }
+          else
+          {
+            seleccion_hecha = true;
+          }
+        }
+        catch (const invalid_argument &e)
+        {
+          cout << "Error: No digitó un número válido." << endl;
+          continue;
+        }
+        catch (const out_of_range &e)
+        {
+          cout << "Error: El número está fuera de rango." << endl;
+          continue;
+        }
+      }
+
+      if (nota.get_proyecto1() == 0)
+      {
+        cout << "Ingrese la nueva nota del proyecto 1" << endl;
+        cin >> proyecto1;
+        notas_del_estudiante[op].set_proyecto1(proyecto1);
+      }
+
+      if (nota.get_proyecto2() == 0)
+      {
+        cout << "Ingrese la nueva nota del proyecto 2" << endl;
+        cin >> proyecto2;
+        notas_del_estudiante[op].set_proyecto2(proyecto2);
+      }
+
+      if (nota.get_ensayo() == 0)
+      {
+        cout << "Ingrese la nueva nota de ensayo" << endl;
+        cin >> ensayo;
+        notas_del_estudiante[op].set_ensayo(ensayo);
+      }
+
+      if (nota.get_foro() == 0)
+      {
+        cout << "Ingrese la nueva nota de foro" << endl;
+        cin >> foro;
+        notas_del_estudiante[op].set_foro(foro);
+      }
+
+      if (nota.get_defensa() == 0)
+      {
+        cout << "Ingrese la nueva nota de defensa" << endl;
+        cin >> defensa;
+        notas_del_estudiante[op].set_defensa(defensa);
+      }
+
+      nota.editar_nota(identidad_buscar, notas_del_estudiante[op]);
+
+      datos_completos = true;
+      continue;
+    }
+    catch (const exception &e)
+    {
+      cerr << "Se ha producido un error: " << e.what() << endl;
+      continue;
+    }
+  }
+}
+
 int main()
 {
   int opcion = 0;
@@ -997,6 +1256,8 @@ int main()
 
     case 4:
     {
+      modificar_calificaciones();
+      break;
     }
 
     case 5:
@@ -1013,6 +1274,5 @@ int main()
     }
   } while (opcion != 7);
   cout << "Saliendo del programa";
-
   return 0;
 }
